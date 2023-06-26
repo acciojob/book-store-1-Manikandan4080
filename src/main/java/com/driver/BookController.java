@@ -54,13 +54,13 @@ public class BookController {
     // pass id as path variable
     // getBookById()
     @GetMapping("/get-book-by-id/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable int id){
+    public ResponseEntity<Book> getBookById(@PathVariable Integer id){
         Book book = getBook(id);
         if(book == null)throw new RuntimeException("Book Not Found");
 
         return new ResponseEntity<>(book, HttpStatus.FOUND);
     }
-    private Book getBook(int id){
+    private Book getBook(Integer id){
         for (Book book : bookList){
             if(book.getId() == id) return book;
         }
@@ -71,18 +71,33 @@ public class BookController {
     // pass id as path variable
     // deleteBookById()
     @DeleteMapping("/delete-book-by-id/{id}")
-    public ResponseEntity<String> deleteBookById(@PathVariable int id){
-        Book book = getBook(id);
-        if(book == null) throw new RuntimeException("Book Not Found");
-        bookList.remove(book);
-        return new ResponseEntity<>("Book Removed Successfully!!", HttpStatus.FOUND);
+    public ResponseEntity<String> deleteBookById(@PathVariable Integer bookId) {
+        if(deleteBook(bookId)) {
+            return new ResponseEntity<>("Book removed Successfully", HttpStatus.FOUND);
+        } else {
+            throw new RuntimeException("Book not found!");
+        }
     }
 
+    private Boolean deleteBook(Integer bookId) {
+        int idx = -1;
+        for(int i = 0; i < bookList.size(); i++) {
+            if(bookList.get(i).getId() == bookId) {
+                idx = i;
+            }
+        }
+        if(idx != -1) {
+            bookList.remove(idx);
+            return true;
+        }
+        return false;
+    }
     // get request /get-all-books
     // getAllBooks()
     @GetMapping("/get-all-books")
     public ResponseEntity<List<Book>> getAllBooks(){
-        return new ResponseEntity<>(getBookList(), HttpStatus.FOUND);
+        List<Book> allBooks = getBookList();
+        return new ResponseEntity<>(allBooks, HttpStatus.FOUND);
     }
 
     // delete request /delete-all-books

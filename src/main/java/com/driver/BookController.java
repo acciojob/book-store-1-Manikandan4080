@@ -47,6 +47,7 @@ public class BookController {
     @PostMapping("/create-book")
     public ResponseEntity<Book> createBook(@RequestBody Book book){
         // Your code goes here.
+        bookList.add(book);
         return new ResponseEntity<>(book, HttpStatus.CREATED);
     }
 
@@ -54,19 +55,23 @@ public class BookController {
     // pass id as path variable
     // getBookById()
     @GetMapping("/get-book-by-id/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Integer id){
-        Book book = getBook(id);
-        if(book == null)throw new RuntimeException("Book Not Found");
-
-        return new ResponseEntity<>(book, HttpStatus.FOUND);
+    public ResponseEntity<Book> getBookById(@PathVariable Integer bookId) {
+        Book book = findBook(bookId);
+        if(book == null) {
+            throw new RuntimeException("Book not found!");
+        } else {
+            return new ResponseEntity<>(book, HttpStatus.FOUND);
+        }
     }
-    private Book getBook(Integer id){
-        for (Book book : bookList){
-            if(book.getId() == id) return book;
+
+    private Book findBook(Integer bookId) {
+        for(Book book : bookList) {
+            if(book.getId() == bookId) {
+                return book;
+            }
         }
         return null;
     }
-
     // delete request /delete-book-by-id/{id}
     // pass id as path variable
     // deleteBookById()
@@ -95,7 +100,7 @@ public class BookController {
     // get request /get-all-books
     // getAllBooks()
     @GetMapping("/get-all-books")
-    public ResponseEntity<List<Book>> getAllBooks(){
+    public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> allBooks = getBookList();
         return new ResponseEntity<>(allBooks, HttpStatus.FOUND);
     }
@@ -103,24 +108,29 @@ public class BookController {
     // delete request /delete-all-books
     // deleteAllBooks()
     @DeleteMapping("/delete-all-books")
-    public ResponseEntity<String> deleteAllBooks(){
+    public ResponseEntity<String> deleteAllBooks() {
         bookList.clear();
-        return new ResponseEntity<>("All Books Cleared", HttpStatus.FOUND);
+        return new ResponseEntity<>("All books deleted Successfully", HttpStatus.CREATED);
     }
 
     // get request /get-books-by-author
     // pass author name as request param
     // getBooksByAuthor()
-    @GetMapping("/books/get-books-by-author")
-    public ResponseEntity<Book> getBooksByAuthor(@RequestParam String authorName){
-        Book book = getBookByAuthorName(authorName);
-        if(book == null) throw new RuntimeException("Book Not Found");
-        return new ResponseEntity<>(book, HttpStatus.FOUND);
+    @GetMapping("/get-books-by-author")
+    public ResponseEntity<Book> getBooksByAuthor(@RequestParam String authorName) {
+        Book book = getBooksByAuthorName(authorName);
+        if(book == null) {
+            throw new RuntimeException("Book not found!");
+        } else {
+            return new ResponseEntity<>(book, HttpStatus.FOUND);
+        }
     }
-    private Book getBookByAuthorName(String name){
-        for(Book book : bookList){
-            if(book.getAuthor().equals(name))
+
+    private Book getBooksByAuthorName(String authorName) {
+        for(Book book : bookList) {
+            if(book.getAuthor().equals(authorName)) {
                 return book;
+            }
         }
         return null;
     }
@@ -128,16 +138,21 @@ public class BookController {
     // get request /get-books-by-genre
     // pass genre name as request param
     // getBooksByGenre()
-    @GetMapping("/get-books-by-genre")
-    public ResponseEntity<Book> getBooksByGenre(@RequestParam String genre){
-        Book book = getByGenre(genre);
-        if(book == null) throw new RuntimeException("Book Not Found");
-        return new ResponseEntity<>(book, HttpStatus.FOUND);
+    @GetMapping("/get-books-by-author")
+    public ResponseEntity<Book> getBooksByGenre(@RequestParam String genreName) {
+        Book book = getBooksByGenreName(genreName);
+        if(book == null) {
+            throw new RuntimeException("Book not found!");
+        } else {
+            return new ResponseEntity<>(book, HttpStatus.FOUND);
+        }
     }
-    private Book getByGenre(String genre){
-        for(Book book : bookList){
-            if(book.getGenre().equals(genre))
+
+    private Book getBooksByGenreName(String genreName) {
+        for(Book book : bookList) {
+            if(book.getGenre().equals(genreName)) {
                 return book;
+            }
         }
         return null;
     }
